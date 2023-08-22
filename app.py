@@ -26,7 +26,11 @@ longitude = None
 
 @app.route("/")
 def index():
-    return send_from_directory(os.path.dirname(__file__), "index.html")
+    user_agent = request.headers.get('User-Agent')
+    if 'Mobile' in user_agent:
+        return send_from_directory(os.path.dirname(__file__), "moble.html")
+    else:
+        return send_from_directory(os.path.dirname(__file__), "index.html")
 
 @app.route("/", methods=["POST"])
 def run_python_script():
