@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/index.css">
+    <script defer src="js/index.js"></script>
+    <title>Home</title>
+</head>
+
+<body>
+    <nav class="nav">
+        <dev class="logo-container">
+            <img class="logo" src="/images/Logo-IF.png" alt="IF logo">
+        </dev>
+        <dev>
+            <dev class="home-container">
+                <a href="/" class="btn home" type="button">Home</a>
+            </dev>
+            <dev class="sobre-container">
+                <a href="/sobre" class="btn sobre" type="button">Sobre</a>
+            </dev>
+        </dev>
+    </nav>
+    <div id="result">
+
+        <dev class="container">
+            <dev class="wrapper">
+                <h1 class="header-text"> Restreamento para TV Digital</h1>
+                <dev class="get-localtion">
+                    <button onclick="getUserLocation()" class="btn">Utilize a sua localização de GPS</button>
+                </dev>
+                <form id="latlong-form">
+
+                    <div class="form-container">
+                        <dev class="lables-container">
+                            <dev class="lat-lable">Latitude:</dev>
+                            <dev class="long-lable">Longitude:</dev>
+                        </dev>
+                        <div class="inputs-container">
+                            <dev class="lat-input">
+                                <input id="lat" name="latitude" type="text">
+                            </dev>
+                            <dev class="long-input">
+                                <input id="long" name="longitude" type="text">
+                            </dev>
+                        </div>
+                    </div>
+                    <dev class="submit">
+                        <input class="btn" type="submit" value="Enviar">
+                    </dev>
+                </form>
+            </dev>
+        </dev>
+    </div>
+</body>
+
+</html>
