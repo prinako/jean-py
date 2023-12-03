@@ -65,7 +65,7 @@ def mapa():
     long1 = local[1]
 
     # Exibição das coordenadas inseridas
-    print(f'\nA sua localização é: {lat1} / {long1}')
+    # print(f'\nA sua localização é: {lat1} / {long1}')
 
     """
     # Solicitando ao usuário as coordenadas do local
@@ -77,7 +77,7 @@ def mapa():
     local = [lat1,long1]
     """
     # Criando um mapa base de acordo com as coordenadas inseridas
-    m = folium.Map(local,zoom_start = 12)
+    m = folium.Map(local,zoom_start = 12,  width='100%', height='100%')
 
     # Trecho do banco de dados da ANATEL, contendo as coordenadas das 4 principais estações de TV de Belém
     # Link: http://sistemas.anatel.gov.br/se/public/view/b/srd.php
@@ -148,7 +148,7 @@ def mapa():
         distancia = hs.haversine(local,estacao)
 
         # Exibindo distância entre a localização informada e a estação de TV
-        print(f'\nCoordenadas da TV {chave} = {lat2:.2f} / {long2:.2f}')
+        # print(f'\nCoordenadas da TV {chave} = {lat2:.2f} / {long2:.2f}')
 
         # Calculando a direção
         x = math.sin(math.radians(long2) - math.radians(long1)) * math.cos(math.radians(lat2))
@@ -168,9 +168,9 @@ def mapa():
         ## Link: https://semfionetworks.com/blog/free-space-path-loss-diagrams/
 
         # Exibição dos valores de distância, direção e atenução (dB)
-        print(f'Distância entre o seu local e a TV {chave} = {distancia} km')
-        print(f'Para a TV {chave} aponte para a direção {direcao:.2f}°')
-        print(f'A atenuação da TV {chave} é de {aten:.2f} dB (FSPL) | {aten1:.2f} dB (Okumura-Hata)\n')
+        # print(f'Distância entre o seu local e a TV {chave} = {distancia} km')
+        # print(f'Para a TV {chave} aponte para a direção {direcao:.2f}°')
+        # print(f'A atenuação da TV {chave} é de {aten:.2f} dB (FSPL) | {aten1:.2f} dB (Okumura-Hata)\n')
 
         # Adição da direção e distância nos vetores 'direcoes' e 'distancias', respectivamente
         direcoes.append(direcao)
@@ -203,16 +203,16 @@ def mapa():
     folium.plugins.MousePosition().add_to(m)
 
     # Exbição do ângulo médio entre as emissoras
-    print(f'O ângulo médio entre as emissoras é: {mean(direcoes)}°')
+    # print(f'O ângulo médio entre as emissoras é: {mean(direcoes)}°')
 
     # Raio do círculo em metros
     raio = max(distancias)*1000
     angulo_med = (((max(direcoes))-(min(direcoes)))/2)+min(direcoes)
     angulo_med1 = direcao_ponderada
     angulo_med2 = direcao_ponderada2
-    print('0 peso:',angulo_med)
-    print('1 peso:',direcao_ponderada)
-    print('2 peso:',direcao_ponderada2)
+    # print('0 peso:',angulo_med)
+    # print('1 peso:',direcao_ponderada)
+    # print('2 peso:',direcao_ponderada2)
     folium.Marker(location=[lat1, long2],
                 popup=folium.Popup('<i>The center of map</i>'),
                 tooltip='Center',
