@@ -20,6 +20,18 @@ image_dir = os.path.join(os.path.dirname(__file__), "images")
 css_dir = os.path.join(os.path.dirname(__file__), "css")
 js_dir = os.path.join(os.path.dirname(__file__), "js")
 
+@app.route("/css/<path:filename>")
+def serve_css(filename):
+    return send_from_directory(css_dir, filename)
+
+@app.route("/js/<path:filename>")
+def serve_js(filename):
+    return send_from_directory(js_dir, filename)
+
+@app.route("/images/<path:filename>")
+def serve_image(filename):
+    return send_from_directory(image_dir, filename)
+
 # Initialize variables to store latitude and longitude
 latitude = None
 longitude = None
@@ -42,28 +54,15 @@ def mapa():
     latitude = request.args.get('latitude', type=float)
     longitude = request.args.get('longitude', type=float)
     # Process latitude and longitude as needed
-    return f"Received coordinates: Latitude {latitude}, Longitude {longitude}"
 
-
-@app.route("/css/<path:filename>")
-def serve_css(filename):
-    return send_from_directory(css_dir, filename)
-
-@app.route("/js/<path:filename>")
-def serve_js(filename):
-    return send_from_directory(js_dir, filename)
-
-@app.route("/images/<path:filename>")
-def serve_image(filename):
-    return send_from_directory(image_dir, filename)
-
-def getMap(lat, long):
-
-    local=float(lat), float(long)
+    # local=float(lat), float(long)
     # Separando as coordenadas do local em duas variáveis, para cálculos de ângulo
     # Separando as coordenadas do local em duas variáveis, para cálculos de ângulo
-    lat1 = local[0]
-    long1 = local[1]
+    lat1 = latitude
+    long1 = longitude
+
+    # lat1 = local[0]
+    # long1 = local[1]
 
     # Exibição das coordenadas inseridas
     print(f'\nA sua localização é: {lat1} / {long1}')
@@ -264,7 +263,9 @@ def getMap(lat, long):
     folium.plugins.SemiCircle(location=local, radius=raio, start_angle=angulo_med2-0.01, stop_angle= angulo_med2+0.01, color="#1A5D1A",fillColor='white', fillOpacity=0.5).add_to(m)
 
     # Cria arquivo HTML para exibir o mapa
-    m.save("map.html")
+    # m.save("map.html")
+    # return f"Received coordinates: Latitude {latitude}, Longitude {longitude}"
+
     return m._repr_html_()
 
 
