@@ -10,5 +10,5 @@ uvicorn==0.22.0
 waitress==2.1.2
 Werkzeug==2.3.4
 haversine
-folium==0.14.0
-numpy --upgrade
+folium
+numpy==1.26.0
