@@ -267,8 +267,9 @@ def mapa():
     # Cria arquivo HTML para exibir o mapa
     # map = m.save("map.html")
     # return f"Received coordinates: Latitude {latitude}, Longitude {longitude}"
-    map_html = m._repr_html_()
-    return m
+    # map_html = m._repr_html_()
+    html_str = m.get_root().render()
+    return html_str
     # return m._repr_html_()
 
 
