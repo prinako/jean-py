@@ -55,14 +55,14 @@ def mapa():
     longitude = request.args.get('longitude', type=float)
     # Process latitude and longitude as needed
 
-    # local=float(lat), float(long)
+    local=latitude, longitude
     # Separando as coordenadas do local em duas variáveis, para cálculos de ângulo
     # Separando as coordenadas do local em duas variáveis, para cálculos de ângulo
-    lat1 = latitude
-    long1 = longitude
+    # lat1 = latitude
+    # long1 = longitude
 
-    # lat1 = local[0]
-    # long1 = local[1]
+    lat1 = local[0]
+    long1 = local[1]
 
     # Exibição das coordenadas inseridas
     print(f'\nA sua localização é: {lat1} / {long1}')

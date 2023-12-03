@@ -11,4 +11,4 @@ waitress==2.1.2
 Werkzeug==2.3.4
 haversine
 folium
-numpy==1.26.0
+#numpy==1.26.0
