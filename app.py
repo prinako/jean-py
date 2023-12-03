@@ -274,7 +274,7 @@ def getMap(lat, long):
     folium.plugins.SemiCircle(location=local, radius=raio, start_angle=angulo_med2-0.01, stop_angle= angulo_med2+0.01, color="#1A5D1A",fillColor='white', fillOpacity=0.5).add_to(m)
 
     # Cria arquivo HTML para exibir o mapa
-    m.save("index.html")
+    m.save("map.html")
     return m._repr_html_()
 
 
