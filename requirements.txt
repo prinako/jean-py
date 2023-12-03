@@ -11,3 +11,4 @@ waitress==2.1.2
 Werkzeug==2.3.4
 haversine
 folium==0.14.0
+numpy --upgrade
