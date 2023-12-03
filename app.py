@@ -47,7 +47,8 @@ def run_python_script():
     # result = subprocess.run(["python", script_path, latitude, longitude], capture_output=True, text=True)
 
     if result:
-        return redirect("/map", code=302)
+        return result
+        # return redirect("/map", code=302)
     else:
         return f"Error: {result.stderr}", 500
 
