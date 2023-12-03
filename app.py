@@ -1,4 +1,4 @@
-from flask import Flask, request, send_from_directory
+from flask import Flask, request, send_from_directory,redirect
 import os
 import subprocess
 import json
@@ -47,13 +47,13 @@ def run_python_script():
     # result = subprocess.run(["python", script_path, latitude, longitude], capture_output=True, text=True)
 
     if result:
-        return result
+        return redirect("/map", code=302)
     else:
         return f"Error: {result.stderr}", 500
 
-@app.route("/sobre")
+@app.route("/map")
 def sobre():
-    return send_from_directory(os.path.dirname(__file__), "sobre.html")
+    return send_from_directory(os.path.dirname(__file__), "map.html")
 
 @app.route("/css/<path:filename>")
 def serve_css(filename):
@@ -179,8 +179,8 @@ def getMap(lat, long):
     folium.plugins.SemiCircle(location=local, radius= max(distancias)*1000, start_angle= (min(direcoes)), stop_angle= (max(direcoes)), fillColor='white', fillOpacity=0.5).add_to(m)
 
     # Cria arquivo HTML para exibir o mapa
-    return m._repr_html_()
     m.save("maps.html")
+    return m._repr_html_()
 
 
 # if __name__ == "__main__":
