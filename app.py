@@ -27,10 +27,9 @@ longitude = None
 @app.route("/", methods=["POST", "GET"])
 def index():
     if request.method == "POST":
-        # data = request.form
-        latitude =float(request.form["latitude"])
-        longitude=float(request.form["longitude"])
-        return redirect('mapa',data=[latitude,longitude])
+        latitude = float(request.form["latitude"])
+        longitude = float(request.form["longitude"])
+        return redirect(url_for('mapa', latitude=latitude, longitude=longitude))
     else:
         user_agent = request.headers.get('User-Agent')
         if 'Mobile' in user_agent:
@@ -38,31 +37,13 @@ def index():
         else:
             return send_from_directory(os.path.dirname(__file__), "index.html")
 
-# @app.route("/", methods=["POST"])
-# def run_python_script():
-#     global latitude, longitude
+@app.route("/mapa")
+def mapa():
+    latitude = request.args.get('latitude', type=float)
+    longitude = request.args.get('longitude', type=float)
+    # Process latitude and longitude as needed
+    return f"Received coordinates: Latitude {latitude}, Longitude {longitude}"
 
-#     data = request.json
-#     print(data)
-#     latitude = data.get("latitude")
-#     longitude = data.get("longitude")
-
-#     result = getMap(latitude,longitude)
-#     print(result)
-#     # script_path = os.path.join(os.path.dirname(__file__), "python", "index.py")
-#     # result = subprocess.run(["python", script_path, latitude, longitude], capture_output=True, text=True)
-
-#     if result:
-#         return result
-#         # return redirect("/map", code=302)
-#     else:
-#         return f"Error: {result.stderr}", 500
-
-@app.route("/<data>")
-def mapa(data):
-    print(data)
-    # return send_from_directory(os.path.dirname(__file__), "map.html")
-    return data
 
 @app.route("/css/<path:filename>")
 def serve_css(filename):
