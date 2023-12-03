@@ -22,31 +22,31 @@ async function getUserLocation() {
     }
 }
 
-document.getElementById("latlong-form").addEventListener("submit", function(event) {
-    event.preventDefault();
+// document.getElementById("latlong-form").addEventListener("submit", function(event) {
+//     event.preventDefault();
 
-    const latitude = document.getElementById("lat").value;
-    const longitude = document.getElementById("long").value;
+//     const latitude = document.getElementById("lat").value;
+//     const longitude = document.getElementById("long").value;
 
-    // Create a JSON object with latitude and longitude
-    const data = {
-        latitude: latitude,
-        longitude: longitude
-    };
+//     // Create a JSON object with latitude and longitude
+//     const data = {
+//         latitude: latitude,
+//         longitude: longitude
+//     };
 
-    fetch('/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => response.text())
-        .then(result => {
-            document.getElementById("result").innerHTML = result;
-            console.log(result)
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-});
+//     fetch('/', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/json'
+//             },
+//             body: JSON.stringify(data)
+//         })
+//         .then(response => response.text())
+//         .then(result => {
+//             document.getElementById("result").innerHTML = result;
+//             console.log(result)
+//         })
+//         .catch(error => {
+//             console.error('Error:', error);
+//         });
+// });

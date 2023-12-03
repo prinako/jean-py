@@ -24,37 +24,44 @@ js_dir = os.path.join(os.path.dirname(__file__), "js")
 latitude = None
 longitude = None
 
-@app.route("/")
+@app.route("/", methods=["POST", "GET"])
 def index():
-    user_agent = request.headers.get('User-Agent')
-    if 'Mobile' in user_agent:
-        return send_from_directory(os.path.dirname(__file__), "moble.html")
+    if request.method == "POST":
+        latitude = request.form[latitude]
+        longitude=request.form[longitude]
+        return redirect('mampa',data=[latitude,longitude])
     else:
-        return send_from_directory(os.path.dirname(__file__), "index.html")
+        user_agent = request.headers.get('User-Agent')
+        if 'Mobile' in user_agent:
+            return send_from_directory(os.path.dirname(__file__), "moble.html")
+        else:
+            return send_from_directory(os.path.dirname(__file__), "index.html")
 
-@app.route("/", methods=["POST"])
-def run_python_script():
-    global latitude, longitude
+# @app.route("/", methods=["POST"])
+# def run_python_script():
+#     global latitude, longitude
 
-    data = request.json
+#     data = request.json
+#     print(data)
+#     latitude = data.get("latitude")
+#     longitude = data.get("longitude")
+
+#     result = getMap(latitude,longitude)
+#     print(result)
+#     # script_path = os.path.join(os.path.dirname(__file__), "python", "index.py")
+#     # result = subprocess.run(["python", script_path, latitude, longitude], capture_output=True, text=True)
+
+#     if result:
+#         return result
+#         # return redirect("/map", code=302)
+#     else:
+#         return f"Error: {result.stderr}", 500
+
+@app.route("/<data>")
+def mapa(data):
     print(data)
-    latitude = data.get("latitude")
-    longitude = data.get("longitude")
-
-    result = getMap(latitude,longitude)
-    print(result)
-    # script_path = os.path.join(os.path.dirname(__file__), "python", "index.py")
-    # result = subprocess.run(["python", script_path, latitude, longitude], capture_output=True, text=True)
-
-    if result:
-        return result
-        # return redirect("/map", code=302)
-    else:
-        return f"Error: {result.stderr}", 500
-
-@app.route("/map")
-def sobre():
-    return send_from_directory(os.path.dirname(__file__), "map.html")
+    # return send_from_directory(os.path.dirname(__file__), "map.html")
+    return data
 
 @app.route("/css/<path:filename>")
 def serve_css(filename):
