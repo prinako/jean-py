@@ -77,10 +77,10 @@ def mapa():
     local = [lat1,long1]
     """
     # Criando um mapa base de acordo com as coordenadas inseridas
-    m = folium.Map(local,zoom_start = 12)
+    m = folium.Map(local,zoom_start = 13)
 
     m._height = '100%'
-    # folium.plugins.Fullscreen().add_to(m)
+    folium.plugins.Fullscreen().add_to(m)
     # Trecho do banco de dados da ANATEL, contendo as coordenadas das 4 principais estações de TV de Belém
     # Link: http://sistemas.anatel.gov.br/se/public/view/b/srd.php
     # Exemplo de dado armazenado: {"Nome da emissora":"lat,long,pot,ganho"}
