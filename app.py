@@ -268,7 +268,7 @@ def mapa():
     # map = m.save("map.html")
     # return f"Received coordinates: Latitude {latitude}, Longitude {longitude}"
     map_html = m._repr_html_()
-    return map_html
+    return Markup(map_html)
     # return m._repr_html_()
 
 
