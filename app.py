@@ -80,8 +80,7 @@ def mapa():
     m = folium.Map(local,zoom_start = 12)
 
     m._height = '100%'
-    viewport = folium.Viewport(width='device-width', height='device-height', zoom_control=False)
-    viewport.add_to(m)
+    folium.plugins.Fullscreen().add_to(m)
     # Trecho do banco de dados da ANATEL, contendo as coordenadas das 4 principais estações de TV de Belém
     # Link: http://sistemas.anatel.gov.br/se/public/view/b/srd.php
     # Exemplo de dado armazenado: {"Nome da emissora":"lat,long,pot,ganho"}
