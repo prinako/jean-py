@@ -71,11 +71,12 @@ def getMap(lat, long):
 
     local=float(lat), float(long)
     # Separando as coordenadas do local em duas variáveis, para cálculos de ângulo
+    # Separando as coordenadas do local em duas variáveis, para cálculos de ângulo
     lat1 = local[0]
     long1 = local[1]
 
     # Exibição das coordenadas inseridas
-    # print(f'\nA sua localização é: {lat1} / {long1}')
+    print(f'\nA sua localização é: {lat1} / {long1}')
 
     """
     # Solicitando ao usuário as coordenadas do local
@@ -102,9 +103,43 @@ def getMap(lat, long):
     # Criando vetor 'direcoes' para posteriormente fazer a média angular
     direcoes = []
     distancias = []
+    atenuacoes = []
 
     # Criando um marcador no mapa referente a localização da antena
     folium.Marker(local, popup=f"<i>Antena\n• Lat/Long: \n{local}</i>", icon=folium.Icon(color="black", icon="home")).add_to(m)
+
+
+    def media_ponderada(valores, pesos):
+        if len(valores) != len(pesos):
+            raise ValueError("O número de valores deve ser igual ao número de pesos")
+
+        soma_produtos = sum(x * w for x, w in zip(valores, pesos))
+        soma_pesos = sum(pesos)
+
+        if soma_pesos == 0:
+            raise ValueError("A soma dos pesos não pode ser zero")
+
+        media_ponderada = soma_produtos / soma_pesos
+        return media_ponderada
+
+    def calcular_perda_sinal(distancia, freq, h_tx, h_rx):
+        # Parâmetros específicos do modelo Okumura-Hata para áreas urbanas
+        a_hm = 3.2 * math.pow((11.75*(math.log10(h_rx))),2) - 4.97
+        L = 69.55 + 26.16 * math.log10(freq) - 13.82 * math.log10(h_tx) - a_hm + (44.9 - 6.55 * math.log10(h_tx)) * math.log10(distancia)
+        return L
+
+    def media_ponderada_dois_pesos(valores, pesos1, pesos2):
+        if len(valores) != len(pesos1) or len(valores) != len(pesos2):
+            raise ValueError("O número de valores deve ser igual ao número de pesos")
+
+        soma_produtos = sum(x * w1 * w2 for x, w1, w2 in zip(valores, pesos1, pesos2))
+        soma_pesos = sum(w1 * w2 for w1, w2 in zip(pesos1, pesos2))
+
+        if soma_pesos == 0:
+            raise ValueError("A soma dos pesos não pode ser zero")
+
+        media_ponderada = soma_produtos / soma_pesos
+        return media_ponderada
 
     for chave, valor in BD.items():
 
@@ -124,7 +159,7 @@ def getMap(lat, long):
         distancia = hs.haversine(local,estacao)
 
         # Exibindo distância entre a localização informada e a estação de TV
-        # print(f'\nCoordenadas da TV {chave} = {lat2:.2f} / {long2:.2f}')
+        print(f'\nCoordenadas da TV {chave} = {lat2:.2f} / {long2:.2f}')
 
         # Calculando a direção
         x = math.sin(math.radians(long2) - math.radians(long1)) * math.cos(math.radians(lat2))
@@ -136,50 +171,110 @@ def getMap(lat, long):
         direcao = (direcao + 360) % 360
 
         # Calculando a atenuação por perda por caminho em espaço livre (Free-Space Path Loss - FSPL)
-        aten = 20*(math.log(distancia,10)) + 20*(math.log(freq,10)) + 32.40 # Para distancia em Km e freq em MHz
+        h_tx = 70  # em metros
+        h_rx = 1.5  # em metros
+        aten = calcular_perda_sinal(distancia, freq, h_tx, h_rx)
+        aten1 = 20*(math.log(distancia,10)) + 20*(math.log(freq,10)) + 32.40 # Para distancia em Km e freq em MHz
         ## Recomendação ITU-R P.525-2 para cálculo de FSPL - Link: https://01189d02-b3bd-4102-9f4c-7bfdb7fd295b.usrfiles.com/ugd/01189d_91d33066b4d240509edf714048d44cc1.pdf
         ## Link: https://semfionetworks.com/blog/free-space-path-loss-diagrams/
 
         # Exibição dos valores de distância, direção e atenução (dB)
-        # print(f'Distância entre o seu local e a TV {chave} = {distancia} km')
-        # print(f'Para a TV {chave} aponte para a direção {direcao:.2f}°')
-        # print(f'A atenuação da TV {chave} é de {aten:.2f} dB\n')
+        print(f'Distância entre o seu local e a TV {chave} = {distancia} km')
+        print(f'Para a TV {chave} aponte para a direção {direcao:.2f}°')
+        print(f'A atenuação da TV {chave} é de {aten:.2f} dB (FSPL) | {aten1:.2f} dB (Okumura-Hata)\n')
 
         # Adição da direção e distância nos vetores 'direcoes' e 'distancias', respectivamente
         direcoes.append(direcao)
         distancias.append(distancia)
+        atenuacoes.append(aten)
 
         # Adição das informações como a distância, direção e atenução no banco de dados
         BD[chave] = f'{valor},{direcao},{freq},{erp},{distancia},{aten}'
 
-        # Inserção de cores de acordo com a distância
         # Plotagem de marcadores e de retas no mapa referente à estação de TV
         folium.Marker(location=estacao, popup=f"<i>• Lat/Long: {estacao} \n• Direção: {direcao:.2f}°</i>",shadowSize=[0,0], icon=folium.Icon(color="red")).add_to(m)
         folium.Marker(location=estacao, icon=folium.DivIcon(html=f"""<div style="font-family: arial; color: blue; font-size: large">{chave}</div>""")).add_to(m)
         linha = folium.PolyLine(locations=[local,estacao], color="red")
         attr = {'fill': 'black', 'font-weight': 'bold', 'font-size': '15'}
-        textline = folium.plugins.PolyLineTextPath(linha, f"Distância: {distancia:.2f} Km / Direção: {direcao:.2f}°", offset=-5, center=True, attributes= attr)
         m.add_child(linha)
-        m.add_child(textline)
+        #textline = folium.plugins.PolyLineTextPath(linha, f"Distância: {distancia:.2f} Km / Direção: {direcao:.2f}°", offset=-5, center=True, attributes= attr)
+        #m.add_child(linha)
+        direcao_ponderada = media_ponderada(direcoes, atenuacoes)
+        direcao_ponderada2 = media_ponderada_dois_pesos(direcoes, atenuacoes, distancias)
 
-    folium.TileLayer('Stamen Terrain').add_to(m)
-    folium.TileLayer('Stamen Toner').add_to(m)
-    folium.TileLayer('Stamen Water Color').add_to(m)
-    folium.TileLayer('cartodbpositron').add_to(m)
-    folium.TileLayer('cartodbdark_matter').add_to(m)
-    folium.LayerControl().add_to(m)
+    # Função para obter a direção de um item
+    def obter_max(item):
+        return float(item.split(',')[4])  # Considerando que a direção é o segundo valor na string
+
+    # Encontrar o item com a maior direção
+    item_maior_direcao = max(BD, key=lambda x: obter_max(BD[x]))
+    #print(f'O item com a maior direção é: {item_maior_direcao}')
 
     folium.plugins.Geocoder().add_to(m)
     folium.plugins.MousePosition().add_to(m)
 
     # Exbição do ângulo médio entre as emissoras
-    # print(f'O ângulo médio entre as emissoras é: {mean(direcoes)}°')
+    print(f'O ângulo médio entre as emissoras é: {mean(direcoes)}°')
+
+    # Raio do círculo em metros
+    raio = max(distancias)*1000
+    angulo_med = (((max(direcoes))-(min(direcoes)))/2)+min(direcoes)
+    angulo_med1 = direcao_ponderada
+    angulo_med2 = direcao_ponderada2
+    print('0 peso:',angulo_med)
+    print('1 peso:',direcao_ponderada)
+    print('2 peso:',direcao_ponderada2)
+    folium.Marker(location=[lat1, long2],
+                popup=folium.Popup('<i>The center of map</i>'),
+                tooltip='Center',
+                icon=folium.DivIcon(html=f"""Aponte para <b>{angulo_med:.2f}</b>°""",
+                                    class_name="mapText"),
+                ).add_to(m)
+
+    # inject html into the map html
+    m.get_root().html.add_child(folium.Element("""
+    <style>
+    .mapText {
+        white-space: nowrap;
+        color:red;
+        font-size:large
+    }
+    </style>
+    """))
+
+    # get the javascript variable name of map object
+    mapJsVar = m.get_name()
+
+    # inject html into the map html
+    injHtml = """
+    <style>
+    .mapText {
+        white-space: nowrap;
+        color:black;
+    }
+    </style>
+    <script>
+    window.onload = function(){
+    var sizeFromZoom = function(z){return (0.25*z)+"em";}
+    $('.mapText').css('font-size', sizeFromZoom({mapJsVar}.getZoom()));
+    {mapJsVar}.on('zoomend', function () {
+        var zoomLevel = {mapJsVar}.getZoom();
+        var tooltip = $('.mapText');
+        tooltip.css('font-size', sizeFromZoom(zoomLevel));
+    });
+    }
+    </script>
+    """
+    m.get_root().html.add_child(folium.Element(injHtml.replace("{mapJsVar}",mapJsVar)))
 
     # Plotagem do semicírculo no mapa
-    folium.plugins.SemiCircle(location=local, radius= max(distancias)*1000, start_angle= (min(direcoes)), stop_angle= (max(direcoes)), fillColor='white', fillOpacity=0.5).add_to(m)
+    folium.plugins.SemiCircle(location=local, radius=raio, start_angle= (min(direcoes)), stop_angle= (max(direcoes)), fillColor='white', fillOpacity=0.0).add_to(m)
+    #folium.plugins.SemiCircle(location=local, radius=raio, start_angle=angulo_med-0.01, stop_angle= angulo_med+0.01, color="#fff55b",fillColor='white', fillOpacity=0.5).add_to(m)
+    #folium.plugins.SemiCircle(location=local, radius=raio, start_angle=angulo_med1-0.01, stop_angle= angulo_med1+0.01, color="#dbce00",fillColor='white', fillOpacity=0.5).add_to(m)
+    folium.plugins.SemiCircle(location=local, radius=raio, start_angle=angulo_med2-0.01, stop_angle= angulo_med2+0.01, color="#1A5D1A",fillColor='white', fillOpacity=0.5).add_to(m)
 
     # Cria arquivo HTML para exibir o mapa
-    m.save("maps.html")
+    m.save("index.html")
     return m._repr_html_()
 
 
