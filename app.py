@@ -27,9 +27,9 @@ longitude = None
 @app.route("/", methods=["POST", "GET"])
 def index():
     if request.method == "POST":
-        print(request)
-        latitude = request.form[latitude]
-        longitude=request.form[longitude]
+        print(request.form)
+        latitude =float(request.form[latitude])
+        longitude=float(request.form[longitude])
         return redirect('mampa',data=[latitude,longitude])
     else:
         user_agent = request.headers.get('User-Agent')
