@@ -30,7 +30,7 @@ def index():
         # data = request.form
         latitude =float(request.form["latitude"])
         longitude=float(request.form["longitude"])
-        return redirect('mampa',data=[latitude,longitude])
+        return redirect('mapa',data=[latitude,longitude])
     else:
         user_agent = request.headers.get('User-Agent')
         if 'Mobile' in user_agent:
