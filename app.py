@@ -230,6 +230,7 @@ def mapa():
         color:red;
         font-size:large
     }
+    hight:100%;
     </style>
     """))
 
