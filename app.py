@@ -77,7 +77,7 @@ def mapa():
     local = [lat1,long1]
     """
     # Criando um mapa base de acordo com as coordenadas inseridas
-    m = folium.Map(local,zoom_start = 15)
+    m = folium.Map(local,zoom_start = 12)
 
     m._height = '100%'
     # folium.plugins.Fullscreen().add_to(m)
